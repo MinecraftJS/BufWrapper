@@ -62,7 +62,7 @@ const buffer = Buffer.from(
   'hex'
 );
 
-const buf = new BufWrapper();
+const buf = new BufWrapper(buffer);
 buf.readInt(); // 42
 buf.readString(); // 'Hello World'
 buf.readLong(); // 123456789
