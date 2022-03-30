@@ -128,7 +128,7 @@ export default class BufWrapper {
    * console.log(buf.buffer); // <Buffer 00 00 00 00 07 5b cd 15>
    * ```
    */
-  public writeLong(value: number | bigint) {
+  public writeLong(value: number | bigint): void {
     const buf = Buffer.alloc(8);
     buf.writeBigInt64BE(BigInt(value));
     this.buffer = Buffer.concat([this.buffer, buf]);
@@ -146,7 +146,7 @@ export default class BufWrapper {
    * console.log(decoded); // 123456789
    * ```
    */
-  public readLong(asBigint: boolean = false): number | bigint {
+  public readLong(asBigint = false): number | bigint {
     const value = this.buffer.readBigInt64BE(this.offset);
     this.offset += 8;
     return asBigint ? value : Number(value);
