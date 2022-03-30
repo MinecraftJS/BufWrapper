@@ -1,2 +1,3 @@
-# MinecraftJS Template
-Fill with your own content
+# BufWrapper
+
+Encode and decode data using buffers
