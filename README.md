@@ -2,6 +2,7 @@
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/MinecraftJS/BufWrapper/Build?style=for-the-badge)
 ![GitHub](https://img.shields.io/github/license/MinecraftJS/BufWrapper?style=for-the-badge)
+![npm (scoped)](https://img.shields.io/npm/v/@minecraft-js/bufwrapper?style=for-the-badge)
 
 Encode and decode data using buffers
 
@@ -22,7 +23,7 @@ Encore and decode:
 Install the package:
 
 ```bash
-$ npm install @minecraftjs/bufwrapper # Not available now
+$ npm install @minecraft-js/bufwrapper
 ```
 
 And then import it in your JavaScript/TypeScript file
