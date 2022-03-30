@@ -1,5 +1,5 @@
 {
-  "name": "bufwrapper",
+  "name": "@minecraft-js/bufwrapper",
   "version": "1.0.0",
   "description": "Encode and decode data using buffers",
   "main": "dist/index.js",
