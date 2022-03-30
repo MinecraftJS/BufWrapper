@@ -29,7 +29,7 @@ $ npm install @minecraft-js/bufwrapper
 And then import it in your JavaScript/TypeScript file
 
 ```ts
-const BufWrapper = require('@minecraft-js/bufwrapper'); // CommonJS
+const BufWrapper = require('@minecraft-js/bufwrapper').default; // CommonJS
 
 import BufWrapper from '@minecraft-js/bufwrapper'; // ES6
 ```

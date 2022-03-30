@@ -180,9 +180,44 @@ export default class BufWrapper {
    */
   public readStringArray(): string[] {
     const length = this.readVarint();
-    const value = [];
+    const value: string[] = [];
     for (let i = 0; i < length; i++) {
       value.push(this.readString());
+    }
+    return value;
+  }
+
+  /**
+   * Write an array of ints to the buffer
+   * @param value The value to write (number[])
+   * @example
+   * ```javascript
+   * const buf = new BufWrapper();
+   * buf.writeIntArray([1, 2, 3]);
+   * console.log(buf.buffer); // <Buffer 03 00 00 00 01 00 00 00 02 00 00 00 03>
+   * ```
+   */
+  public writeIntArray(value: number[]): void {
+    this.writeVarint(value.length);
+    value.forEach((v) => this.writeInt(v));
+  }
+
+  /**
+   * Read an array of ints from the buffer
+   * @returns The array read from the buffer
+   * @example
+   * ```javascript
+   * const buffer = Buffer.from([ 0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03 ]);
+   * const buf = new BufWrapper(buffer);
+   * const decoded = buf.readIntArray();
+   * console.log(decoded); // [ 1, 2, 3 ]
+   * ```
+   */
+  public readIntArray(): number[] {
+    const length = this.readVarint();
+    const value: number[] = [];
+    for (let i = 0; i < length; i++) {
+      value.push(this.readInt());
     }
     return value;
   }
