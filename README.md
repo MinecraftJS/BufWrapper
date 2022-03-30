@@ -15,6 +15,7 @@ Encore and decode:
 - Int
 - Long
 - Array of strings
+- Array of ints
 
 # Documentation
 
