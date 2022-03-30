@@ -8,7 +8,7 @@ Encode and decode data using buffers
 
 # Features
 
-Encore and decode:
+Encode and decode:
 
 - Varint
 - String
@@ -16,6 +16,8 @@ Encore and decode:
 - Long
 - Array of strings
 - Array of ints
+  
+⚠️ They are all signed and big endian (As Java does)
 
 # Documentation
 
