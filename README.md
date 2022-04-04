@@ -16,6 +16,7 @@ Encode and decode:
 - Long
 - Array of strings
 - Array of ints
+- UUID
   
 ⚠️ They are all signed and big endian (As Java does)
 

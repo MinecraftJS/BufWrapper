@@ -22,11 +22,11 @@ export default class BufWrapper {
    * @example
    * ```javascript
    * const buf = new BufWrapper();
-   * buf.writeVarint(300);
+   * buf.writeVarInt(300);
    * console.log(buf.buffer); // <Buffer ac 02>
    * ```
    */
-  public writeVarint(value: number): void {
+  public writeVarInt(value: number): void {
     const encoded = varint.encode(value);
     this.buffer = Buffer.concat([this.buffer, Buffer.from(encoded)]);
   }
@@ -38,11 +38,11 @@ export default class BufWrapper {
    * ```javascript
    * const buffer = Buffer.from([0xac, 0x02]);
    * const buf = new BufWrapper(buffer);
-   * const decoded = buf.readVarint();
+   * const decoded = buf.readVarInt();
    * console.log(decoded); // 300
    * ```
    */
-  public readVarint(): number {
+  public readVarInt(): number {
     const value = varint.decode(this.buffer, this.offset);
     this.offset += varint.decode.bytes;
     return value;
@@ -59,7 +59,7 @@ export default class BufWrapper {
    * ```
    */
   public writeString(value: string): void {
-    this.writeVarint(value.length);
+    this.writeVarInt(value.length);
     this.buffer = Buffer.concat([this.buffer, Buffer.from(value)]);
   }
 
@@ -75,7 +75,7 @@ export default class BufWrapper {
    * ```
    */
   public readString(): string {
-    const length = this.readVarint();
+    const length = this.readVarInt();
     const value = this.buffer.toString(
       'utf8',
       this.offset,
@@ -163,7 +163,7 @@ export default class BufWrapper {
    * ```
    */
   public writeStringArray(value: string[]): void {
-    this.writeVarint(value.length);
+    this.writeVarInt(value.length);
     value.forEach((v) => this.writeString(v));
   }
 
@@ -179,7 +179,7 @@ export default class BufWrapper {
    * ```
    */
   public readStringArray(): string[] {
-    const length = this.readVarint();
+    const length = this.readVarInt();
     const value: string[] = [];
     for (let i = 0; i < length; i++) {
       value.push(this.readString());
@@ -198,7 +198,7 @@ export default class BufWrapper {
    * ```
    */
   public writeIntArray(value: number[]): void {
-    this.writeVarint(value.length);
+    this.writeVarInt(value.length);
     value.forEach((v) => this.writeInt(v));
   }
 
@@ -214,11 +214,55 @@ export default class BufWrapper {
    * ```
    */
   public readIntArray(): number[] {
-    const length = this.readVarint();
+    const length = this.readVarInt();
     const value: number[] = [];
     for (let i = 0; i < length; i++) {
       value.push(this.readInt());
     }
     return value;
+  }
+
+  /**
+   * Write an UUID to the buffer
+   * @param value The value to write (string, uuid with dashes or not)
+   * @example
+   * ```javascript
+   * const buf = new BufWrapper();
+   * buf.writeUUID('c09b74b4-8c14-44cb-b567-6576a2daf1f9');
+   * console.log(buf.buffer); // <Buffer C0 9B 74 B4 8C 14 44 CB B5 67 65 76 A2 DA F1 F9>
+   * ```
+   */
+  public writeUUID(value: string): void {
+    const buf = Buffer.alloc(16);
+    buf.write(value.replace(/-/g, ''), 0, 'hex');
+    this.buffer = Buffer.concat([this.buffer, buf]);
+  }
+
+  /**
+   * Read an UUID from the buffer
+   * @param {boolean} [dashes] If true, the UUID will be returned with dashes. Otherwise, it will be returned without dashes. Defaults to true.
+   * @returns The UUID read from the buffer
+   * @example
+   * ```javascript
+   * const buffer = Buffer.from([ 0xC0, 0x9B, 0x74, 0xB4, 0x8C, 0x14, 0x44, 0xCB, 0xB5, 0x67, 0x65, 0x76, 0xA2, 0xDA, 0xF1, 0xF9 ]);
+   * const buf = new BufWrapper(buffer);
+   * const decoded = buf.readUUID();
+   * console.log(decoded); // c09b74b4-8c14-44cb-b567-6576a2daf1f9
+   * ```
+   */
+  public readUUID(dashes = true): string {
+    const value = this.buffer.toString('hex', this.offset, this.offset + 16);
+    this.offset += 16;
+    return dashes
+      ? value.substr(0, 8) +
+          '-' +
+          value.substr(8, 4) +
+          '-' +
+          value.substr(12, 4) +
+          '-' +
+          value.substr(16, 4) +
+          '-' +
+          value.substr(20)
+      : value;
   }
 }
