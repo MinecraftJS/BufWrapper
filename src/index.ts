@@ -265,4 +265,36 @@ export default class BufWrapper {
           value.substr(20)
       : value;
   }
+
+  /**
+   * Write raw bytes to the buffer
+   * @param value The value to write (a buffer or an array of bytes)
+   * @example
+   * ```javascript
+   * const buf = new BufWrapper();
+   * buf.writeBytes([ 0x01, 0x02, 0x03 ]);
+   * console.log(buf.buffer); // <Buffer 01 02 03>
+   * ```
+   */
+  public writeBytes(value: Buffer | number[]): void {
+    this.buffer = Buffer.concat([this.buffer, Buffer.from(value)]);
+  }
+
+  /**
+   * Read raw bytes from the buffer
+   * @param length The number of bytes to read
+   * @returns The bytes read from the buffer
+   * @example
+   * ```javascript
+   * const buffer = Buffer.from([ 0x01, 0x02, 0x03 ]);
+   * const buf = new BufWrapper(buffer);
+   * const decoded = buf.readBytes(3);
+   * console.log(decoded); // <Buffer 01 02 03>
+   * ```
+   */
+  public readBytes(length: number): Buffer {
+    const value = this.buffer.slice(this.offset, this.offset + length);
+    this.offset += length;
+    return value;
+  }
 }
