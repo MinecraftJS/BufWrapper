@@ -19,7 +19,7 @@ Encode and decode:
 - UUID
 - Byte
 - Boolean
-  
+
 ⚠️ They are all signed and big endian (As Java does)
 
 # Documentation
