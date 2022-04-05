@@ -297,4 +297,35 @@ export default class BufWrapper {
     this.offset += length;
     return value;
   }
+
+  /**
+   * Write a boolean to the buffer
+   * @param value The value to write (boolean)
+   * @example
+   * ```javascript
+   * const buf = new BufWrapper();
+   * buf.writeBoolean(true);
+   * console.log(buf.buffer); // <Buffer 01>
+   * ```
+   */
+  public writeBoolean(value: boolean): void {
+    this.buffer = Buffer.concat([this.buffer, Buffer.from([value ? 1 : 0])]);
+  }
+
+  /**
+   * Read a boolean from the buffer
+   * @returns The boolean read from the buffer
+   * @example
+   * ```javascript
+   * const buffer = Buffer.from([ 0x01 ]);
+   * const buf = new BufWrapper(buffer);
+   * const decoded = buf.readBoolean();
+   * console.log(decoded); // true
+   * ```
+   */
+  public readBoolean(): boolean {
+    const value = this.buffer.readUInt8(this.offset) === 1;
+    this.offset += 1;
+    return value;
+  }
 }

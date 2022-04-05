@@ -17,6 +17,8 @@ Encode and decode:
 - Array of strings
 - Array of ints
 - UUID
+- Byte
+- Boolean
   
 ⚠️ They are all signed and big endian (As Java does)
 
