@@ -328,4 +328,37 @@ export default class BufWrapper {
     this.offset += 1;
     return value;
   }
+
+  /**
+   * Write a float to the buffer
+   * @param value The value to write (number)
+   * @example
+   * ```javascript
+   * const buf = new BufWrapper();
+   * buf.writeFloat(12.34);
+   * console.log(buf.buffer); // <Buffer 41 45 70 a4>
+   * ```
+   */
+  public writeFloat(value: number): void {
+    const buf = Buffer.alloc(4);
+    buf.writeFloatBE(value);
+    this.buffer = Buffer.concat([this.buffer, buf]);
+  }
+
+  /**
+   * Read a float from the buffer
+   * @returns The float read from the buffer
+   * @example
+   * ```javascript
+   * const buffer = Buffer.from([ 0x41, 0x45, 0x70, 0xa4 ]);
+   * const buf = new BufWrapper(buffer);
+   * const decoded = buf.readFloat();
+   * console.log(decoded); // 12.34000015258789
+   * ```
+   */
+  public readFloat(): number {
+    const value = this.buffer.readFloatBE(this.offset);
+    this.offset += 4;
+    return value;
+  }
 }
