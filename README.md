@@ -20,7 +20,7 @@ Encode and decode:
 - Byte
 - Boolean
 - Float
-  
+
 ⚠️ They are all signed and big endian (As Java does)
 
 # Documentation
@@ -72,4 +72,32 @@ const buf = new BufWrapper(buffer);
 buf.readInt(); // 42
 buf.readString(); // 'Hello World'
 buf.readLong(); // 123456789
+```
+
+## Note on the speed
+
+By default the library can be slow if you are writing a lot of data.
+The writing process can be optimized by using the `oneConcat` option.
+
+This option requires an additional call after writing the data.
+
+```js
+const buf = new BufWrapper(null, { oneConcat: true });
+buf.writeInt(42);
+buf.writeString('Hello World');
+buf.writeLong(123456789);
+
+// The call required
+buf.finish();
+```
+
+Before you call the `BufWrapper#finish` method, the `BufWrapper#buffer` property will be an empty buffer.
+
+You can see by yourself the speed upgrade by running the `test/time.js` file. Here is
+what I got on my computer when writing 150,000 integers
+
+```
+$ node test/time.js
+oneConcat = false : 7.261s
+oneConcat = true  : 63.869ms
 ```
