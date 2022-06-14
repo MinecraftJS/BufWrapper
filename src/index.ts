@@ -5,15 +5,24 @@ export default class BufWrapper {
    * The wrapped NodeJS buffer
    */
   public buffer: Buffer;
+
+  /** Current offset */
   private offset: number;
+  /** List of buffers, used for the `oneConcat` option */
+  private buffers: Buffer[];
+  /** Options that apply to the current `BufWrapper` instance */
+  private options?: BufWrapperOptions;
 
   /**
    * Create a new buffer wrapper instance
    * @param buffer The NodeJS buffer to wrap, optional
+   * @param options Options to apply to the buffer wrapper, optional
    */
-  public constructor(buffer?: Buffer) {
+  public constructor(buffer?: Buffer, options?: BufWrapperOptions) {
     this.buffer = buffer || Buffer.alloc(0);
     this.offset = 0;
+    this.buffers = [];
+    this.options = options;
   }
 
   /**
@@ -28,7 +37,7 @@ export default class BufWrapper {
    */
   public writeVarInt(value: number): void {
     const encoded = varint.encode(value);
-    this.buffer = Buffer.concat([this.buffer, Buffer.from(encoded)]);
+    this.writeToBuffer(Buffer.from(encoded));
   }
 
   /**
@@ -49,7 +58,7 @@ export default class BufWrapper {
   }
 
   /**
-   * Write a string to the buffer
+   * Write a string to the buffer (will use the ut8 encoding)
    * @param value The value to write (string)
    * @example
    * ```javascript
@@ -60,11 +69,11 @@ export default class BufWrapper {
    */
   public writeString(value: string): void {
     this.writeVarInt(value.length);
-    this.buffer = Buffer.concat([this.buffer, Buffer.from(value)]);
+    this.writeToBuffer(Buffer.from(value));
   }
 
   /**
-   * Read a string from the buffer
+   * Read a string from the buffer (will use the ut8 encoding)
    * @returns The string value read from the buffer
    * @example
    * ```javascript
@@ -98,7 +107,7 @@ export default class BufWrapper {
   public writeInt(value: number): void {
     const buf = Buffer.alloc(4);
     buf.writeInt32BE(value);
-    this.buffer = Buffer.concat([this.buffer, buf]);
+    this.writeToBuffer(buf);
   }
 
   /**
@@ -131,7 +140,7 @@ export default class BufWrapper {
   public writeLong(value: number | bigint): void {
     const buf = Buffer.alloc(8);
     buf.writeBigInt64BE(BigInt(value));
-    this.buffer = Buffer.concat([this.buffer, buf]);
+    this.writeToBuffer(buf);
   }
 
   /**
@@ -235,12 +244,12 @@ export default class BufWrapper {
   public writeUUID(value: string): void {
     const buf = Buffer.alloc(16);
     buf.write(value.replace(/-/g, ''), 0, 'hex');
-    this.buffer = Buffer.concat([this.buffer, buf]);
+    this.writeToBuffer(buf);
   }
 
   /**
    * Read an UUID from the buffer
-   * @param {boolean} [dashes] If true, the UUID will be returned with dashes. Otherwise, it will be returned without dashes. Defaults to true.
+   * @param dashes If true, the UUID will be returned with dashes. Otherwise, it will be returned without dashes. Defaults to true.
    * @returns The UUID read from the buffer
    * @example
    * ```javascript
@@ -277,7 +286,7 @@ export default class BufWrapper {
    * ```
    */
   public writeBytes(value: Buffer | number[]): void {
-    this.buffer = Buffer.concat([this.buffer, Buffer.from(value)]);
+    this.writeToBuffer(Buffer.from(value));
   }
 
   /**
@@ -309,7 +318,7 @@ export default class BufWrapper {
    * ```
    */
   public writeBoolean(value: boolean): void {
-    this.buffer = Buffer.concat([this.buffer, Buffer.from([value ? 1 : 0])]);
+    this.writeToBuffer(Buffer.from([value ? 1 : 0]));
   }
 
   /**
@@ -342,7 +351,7 @@ export default class BufWrapper {
   public writeFloat(value: number): void {
     const buf = Buffer.alloc(4);
     buf.writeFloatBE(value);
-    this.buffer = Buffer.concat([this.buffer, buf]);
+    this.writeToBuffer(buf);
   }
 
   /**
@@ -361,4 +370,50 @@ export default class BufWrapper {
     this.offset += 4;
     return value;
   }
+
+  /**
+   * When the `BufWrapperOptions#oneConcat` is set to `true`
+   * you must call this method to concatenate all buffers
+   * into one. If the option is `undefined` or set to `false`,
+   * this method will throw an error.
+   *
+   * This method will also set the `BufWrapper#buffer` to the
+   * concatenated buffer.
+   * @returns The concatenated buffer.
+   */
+  public finish(): Buffer {
+    if (this.options?.oneConcat !== true)
+      throw new Error(
+        "Can't call BufWrapper#finish without oneConcat option set to true"
+      );
+
+    const buf = Buffer.concat([...this.buffers]);
+    this.buffer = buf;
+    return buf;
+  }
+
+  /**
+   * Concat the given buffers into the main buffer
+   * if `BufWrapperOptions#oneConcat` is `false` or `undefined`.
+   * Otherwise, it will push the buffer to the `BufWrapper#buffers`
+   * array.
+   * @param value The buffers to write (array of buffers)
+   */
+  private writeToBuffer(...buffers: Buffer[]): void {
+    if (this.options?.oneConcat === true) this.buffers.push(...buffers);
+    else this.buffer = Buffer.concat([this.buffer, ...buffers]);
+  }
+}
+
+interface BufWrapperOptions {
+  /**
+   * Whether or not to run the `Buffer#concat` method when writing.
+   * When set to `true`, you will have to call the `BufWrapper#finish`
+   * method to get the final buffer. (Making this true and calling)
+   * the `BufWrapper#finish` will increase performance.
+   * When set to `false`, the `BufWrapper#finish` method will throw an error
+   * and the `Buffer#concat` will be run every time you write something
+   * to the buffer.
+   */
+  oneConcat?: boolean;
 }
