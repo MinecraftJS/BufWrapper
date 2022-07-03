@@ -372,6 +372,39 @@ export default class BufWrapper {
   }
 
   /**
+   * Write a short to the buffer
+   * @param value The value to write (number)
+   * @example
+   * ```javascript
+   * const buf = new BufWrapper();
+   * buf.writeShort(42);
+   * console.log(buf.buffer); // <Buffer 00 2a>
+   * ```
+   */
+  public writeShort(value: number): void {
+    const buf = Buffer.alloc(2);
+    buf.writeUInt16BE(value);
+    this.writeToBuffer(buf);
+  }
+
+  /**
+   * Read a float from the buffer
+   * @returns The float read from the buffer
+   * @example
+   * ```javascript
+   * const buffer = Buffer.from([ 0x00, 0x2a ]);
+   * const buf = new BufWrapper(buffer);
+   * const decoded = buf.readShort();
+   * console.log(decoded); // 42
+   * ```
+   */
+  public readShort(): number {
+    const value = this.buffer.readInt16BE(this.offset);
+    this.offset += 2;
+    return value;
+  }
+
+  /**
    * When the `BufWrapperOptions#oneConcat` is set to `true`
    * you must call this method to concatenate all buffers
    * into one. If the option is `undefined` or set to `false`,

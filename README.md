@@ -20,6 +20,7 @@ Encode and decode:
 - Byte
 - Boolean
 - Float
+- Short
 
 ⚠️ They are all signed and big endian (As Java does)
 
