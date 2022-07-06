@@ -1,28 +1,39 @@
 import * as varint from 'varint';
 
-export default class BufWrapper {
+export default class BufWrapper<
+  Plugins extends BufWrapperPlugins = BufWrapperPlugins
+> {
   /**
    * The wrapped NodeJS buffer
    */
   public buffer: Buffer;
+  /**
+   * Current offset (used for reading)
+   */
+  public offset: number;
+  /**
+   * Options that apply to the current `BufWrapper` instance
+   * */
+  public options?: BufWrapperOptions<Plugins>;
+  /**
+   * Installed plugins so you can access them from this object
+   */
+  public plugins?: Plugins;
 
-  /** Current offset */
-  private offset: number;
   /** List of buffers, used for the `oneConcat` option */
   private buffers: Buffer[];
-  /** Options that apply to the current `BufWrapper` instance */
-  private options?: BufWrapperOptions;
 
   /**
    * Create a new buffer wrapper instance
    * @param buffer The NodeJS buffer to wrap, optional
    * @param options Options to apply to the buffer wrapper, optional
    */
-  public constructor(buffer?: Buffer, options?: BufWrapperOptions) {
+  public constructor(buffer?: Buffer, options?: BufWrapperOptions<Plugins>) {
     this.buffer = buffer || Buffer.alloc(0);
     this.offset = 0;
     this.buffers = [];
     this.options = options;
+    this.plugins = options?.plugins;
   }
 
   /**
@@ -432,13 +443,19 @@ export default class BufWrapper {
    * array.
    * @param value The buffers to write (array of buffers)
    */
-  private writeToBuffer(...buffers: Buffer[]): void {
+  public writeToBuffer(...buffers: Buffer[]): void {
     if (this.options?.oneConcat === true) this.buffers.push(...buffers);
     else this.buffer = Buffer.concat([this.buffer, ...buffers]);
   }
 }
 
-interface BufWrapperOptions {
+type BufWrapperPlugins = {
+  [key: string]: {
+    [key: string]: (buf: BufWrapper, ...args: any[]) => any;
+  };
+};
+
+interface BufWrapperOptions<Plugins> {
   /**
    * Whether or not to run the `Buffer#concat` method when writing.
    * When set to `true`, you will have to call the `BufWrapper#finish`
@@ -449,4 +466,9 @@ interface BufWrapperOptions {
    * to the buffer.
    */
   oneConcat?: boolean;
+  /**
+   * Plugins you want to install on the BufferWrapper intance
+   * you are about to create
+   */
+  plugins?: Plugins;
 }
