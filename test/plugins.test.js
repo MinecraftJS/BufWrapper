@@ -1,4 +1,4 @@
-const BufWrapper = require('../dist').default;
+const { BufWrapper } = require('../dist');
 const { assert } = require('chai');
 
 const CStringPlugin = {

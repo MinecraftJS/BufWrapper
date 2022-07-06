@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const BufWrapper = require('../dist').default;
+const { BufWrapper } = require('../dist');
 
 describe('Long', () => {
   it('Write 1', () => {

@@ -1,4 +1,4 @@
-const BufWrapper = require('../dist').default;
+const { BufWrapper } = require('../dist');
 
 console.time('oneConcat = false ');
 const buf1 = new BufWrapper(null, { oneConcat: false });
