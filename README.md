@@ -102,3 +102,5 @@ $ node test/time.js
 oneConcat = false : 7.261s
 oneConcat = true  : 63.869ms
 ```
+
+See more here: https://minecraftjs.github.io/BufWrapper/
