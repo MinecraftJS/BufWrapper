@@ -1,8 +1,6 @@
 import * as varint from 'varint';
 
-export default class BufWrapper<
-  Plugins extends BufWrapperPlugins = BufWrapperPlugins
-> {
+export class BufWrapper<Plugins extends BufWrapperPlugins = BufWrapperPlugins> {
   /**
    * The wrapped NodeJS buffer
    */
@@ -156,7 +154,6 @@ export default class BufWrapper<
 
   /**
    * Read a long from the buffer
-   * @param asBigint If true, the value will be returned as a bigint. Otherwise, it will be returned as a number.
    * @returns The long value read from the buffer
    * @example
    * ```javascript
@@ -166,10 +163,10 @@ export default class BufWrapper<
    * console.log(decoded); // 123456789
    * ```
    */
-  public readLong(asBigint = false): number | bigint {
+  public readLong(): number {
     const value = this.buffer.readBigInt64BE(this.offset);
     this.offset += 8;
-    return asBigint ? value : Number(value);
+    return Number(value);
   }
 
   /**
@@ -449,13 +446,14 @@ export default class BufWrapper<
   }
 }
 
-type BufWrapperPlugins = {
+/** Type used as default value for the `BufWrapper#plugins` property */
+export type BufWrapperPlugins = {
   [key: string]: {
     [key: string]: (buf: BufWrapper, ...args: any[]) => any;
   };
 };
 
-interface BufWrapperOptions<Plugins> {
+export interface BufWrapperOptions<Plugins> {
   /**
    * Whether or not to run the `Buffer#concat` method when writing.
    * When set to `true`, you will have to call the `BufWrapper#finish`
@@ -469,6 +467,28 @@ interface BufWrapperOptions<Plugins> {
   /**
    * Plugins you want to install on the BufferWrapper intance
    * you are about to create
+   * @exemple
+   * ```javascript
+   * // Plugin we are creating
+   * const BufWrapperPlugin = {
+   *   writeCustomType(buf, data) {
+   *     // Do stuff with `buf`
+   *   },
+   *   readCustomType(buf) {
+   *     // Do stuff
+   *     return someValue;
+   *   }
+   * }
+   *
+   * // Setting the first argument as null
+   * // since we don't have any data yet
+   * const buf = new BufWrapper(null, {
+   *   plugins: { BufWrapperPlugin }
+   * });
+   *
+   * // Call the plugin's method
+   * buf.plugins.BufWrapperPlugin.writeCustomType(buf, yourData);
+   * ```
    */
   plugins?: Plugins;
 }
