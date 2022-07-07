@@ -31,7 +31,20 @@ export class BufWrapper<Plugins extends BufWrapperPlugins = BufWrapperPlugins> {
     this.offset = 0;
     this.buffers = [];
     this.options = options;
-    this.plugins = options?.plugins;
+
+    if (options?.plugins) {
+      this.plugins = {} as Plugins;
+
+      for (const plugin in options.plugins) {
+        // @ts-ignore
+        if (!this.plugins[plugin]) this.plugins[plugin] = {};
+
+        for (const method in options.plugins[plugin])
+          if (!this.plugins[plugin][method])
+            this.plugins[plugin][method] =
+              options.plugins[plugin][method].bind(this);
+      }
+    }
   }
 
   /**
@@ -449,7 +462,7 @@ export class BufWrapper<Plugins extends BufWrapperPlugins = BufWrapperPlugins> {
 /** Type used as default value for the `BufWrapper#plugins` property */
 export type BufWrapperPlugins = {
   [key: string]: {
-    [key: string]: (buf: BufWrapper, ...args: any[]) => any;
+    [key: string]: (...args: any[]) => any;
   };
 };
 
@@ -471,10 +484,11 @@ export interface BufWrapperOptions<Plugins> {
    * ```javascript
    * // Plugin we are creating
    * const BufWrapperPlugin = {
-   *   writeCustomType(buf, data) {
-   *     // Do stuff with `buf`
+   *   writeCustomType(data) {
+   *     // You can access the BufWrapper
+   *     // instance with the `this` keyword
    *   },
-   *   readCustomType(buf) {
+   *   readCustomType() {
    *     // Do stuff
    *     return someValue;
    *   }
@@ -487,7 +501,8 @@ export interface BufWrapperOptions<Plugins> {
    * });
    *
    * // Call the plugin's method
-   * buf.plugins.BufWrapperPlugin.writeCustomType(buf, yourData);
+   * buf.plugins.BufWrapperPlugin.writeCustomType(yourData);
+   * buf.plugins.BufWrapperPlugin.readCustomType();
    * ```
    */
   plugins?: Plugins;

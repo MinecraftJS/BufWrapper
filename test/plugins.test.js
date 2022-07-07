@@ -3,27 +3,28 @@ const { assert } = require('chai');
 
 const CStringPlugin = {
   /**
-   * @param {BufWrapper} buf
-   * @param {String} string
+   * Write a CString (string terminating with a null byte `0x00`) to the buffer
+   * @param {string} string String to write
    */
-  writeCString(buf, string) {
+  writeCString(string) {
     const buffer = Buffer.alloc(Buffer.byteLength(string) + 1);
     buffer.write(string);
-    buf.writeToBuffer(buffer);
+    this.writeToBuffer(buffer);
   },
 
   /**
-   * @param {BufWrapper} buf
+   * Read a CString (string terminating with a null byte `0x00`) from the buffer
+   * @returns The read string
    */
-  readCString(buf) {
-    let cursor = buf.offset;
+  readCString() {
+    let cursor = this.offset;
     let length = 0;
-    while (buf.buffer[cursor] !== 0x00) {
+    while (this.buffer[cursor] !== 0x00) {
       length++;
       cursor++;
     }
-    const bytes = buf.buffer.slice(buf.offset, length);
-    buf.offset += length + 1;
+    const bytes = this.buffer.slice(this.offset, length);
+    this.offset += length + 1;
     return bytes.toString();
   },
 };
@@ -34,7 +35,7 @@ describe('Plugins', () => {
       plugins: { CStringPlugin },
     });
 
-    buf.plugins.CStringPlugin.writeCString(buf, 'Hello World!');
+    buf.plugins.CStringPlugin.writeCString('Hello World!');
 
     assert.equal(buf.buffer.toString('hex'), '48656c6c6f20576f726c642100');
   });
@@ -47,6 +48,6 @@ describe('Plugins', () => {
       }
     );
 
-    assert.equal(buf.plugins.CStringPlugin.readCString(buf), 'Hello World!');
+    assert.equal(buf.plugins.CStringPlugin.readCString(), 'Hello World!');
   });
 });
