@@ -32,5 +32,8 @@
   },
   "dependencies": {
     "varint": "^6.0.0"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
