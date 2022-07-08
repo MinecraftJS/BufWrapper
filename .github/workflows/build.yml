@@ -23,6 +23,9 @@ jobs:
         run: npm run build
       - name: Test code
         run: npm run test
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
       - name: Generate docs
         run: npm run doc
       - name: Commit changes
