@@ -35,11 +35,11 @@ export class BufWrapper<Plugins extends BufWrapperPlugins = BufWrapperPlugins> {
     if (options?.plugins) {
       this.plugins = {} as Plugins;
 
-      for (const plugin in options.plugins) {
+      for (const plugin of Object.keys(options.plugins)) {
         // @ts-ignore
         if (!this.plugins[plugin]) this.plugins[plugin] = {};
 
-        for (const method in options.plugins[plugin])
+        for (const method of Object.keys(options.plugins[plugin]))
           if (!this.plugins[plugin][method])
             this.plugins[plugin][method] =
               options.plugins[plugin][method].bind(this);
