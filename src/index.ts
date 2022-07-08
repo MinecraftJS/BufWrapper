@@ -11,7 +11,7 @@ export class BufWrapper<Plugins extends BufWrapperPlugins = BufWrapperPlugins> {
   public offset: number;
   /**
    * Options that apply to the current `BufWrapper` instance
-   * */
+   */
   public options?: BufWrapperOptions<Plugins>;
   /**
    * Installed plugins so you can access them from this object
@@ -36,8 +36,14 @@ export class BufWrapper<Plugins extends BufWrapperPlugins = BufWrapperPlugins> {
       this.plugins = {} as Plugins;
 
       for (const plugin of Object.keys(options.plugins)) {
-        // @ts-ignore
-        if (!this.plugins[plugin]) this.plugins[plugin] = {};
+        /**
+         * Not gonna lie, this is very hacky but with
+         * this TypeScript doesn't complain. The following
+         * creates an empty object and set it to this.plugins[pluginName]
+         * if it doesn't already exist
+         */
+        if (!this.plugins[plugin])
+          this.plugins[plugin as keyof Plugins] = {} as Plugins[keyof Plugins];
 
         for (const method of Object.keys(options.plugins[plugin]))
           if (!this.plugins[plugin][method])
