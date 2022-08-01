@@ -21,6 +21,7 @@ Encode and decode:
 - Boolean
 - Float
 - Short
+- Double
 
 ⚠️ They are all signed and big endian (As Java does)
 

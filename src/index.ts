@@ -432,6 +432,39 @@ export class BufWrapper<Plugins extends BufWrapperPlugins = BufWrapperPlugins> {
   }
 
   /**
+   * Write a double to the buffer
+   * @param value The value to write (number)
+   * @example
+   * ```javascript
+   * const buf = new BufWrapper();
+   * buf.writeDouble(42.42);
+   * console.log(buf.buffer); // <Buffer 40 45 35 c2 8f 5c 28 f6>
+   * ```
+   */
+  public writeDouble(value: number): void {
+    const buf = Buffer.alloc(8);
+    buf.writeDoubleBE(value);
+    this.writeToBuffer(buf);
+  }
+
+  /**
+   * Read a double from the buffer
+   * @returns The double read from the buffer
+   * @example
+   * ```javascript
+   * const buffer = Buffer.from([ 0x40, 4x45, 0x35, 0xc2, 0x8f, 0x5c, 0x28, 0xf6 ]);
+   * const buf = new BufWrapper(buffer);
+   * const decoded = buf.readShort();
+   * console.log(decoded); // 42.42
+   * ```
+   */
+  public readDouble(): number {
+    const value = this.buffer.readDoubleBE(this.offset);
+    this.offset += 8;
+    return value;
+  }
+
+  /**
    * When the `BufWrapperOptions#oneConcat` is set to `true`
    * you must call this method to concatenate all buffers
    * into one. If the option is `undefined` or set to `false`,
