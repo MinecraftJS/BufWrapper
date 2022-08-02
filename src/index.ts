@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer';
 import * as varint from 'varint';
 
 export class BufWrapper<Plugins extends BufWrapperPlugins = BufWrapperPlugins> {
