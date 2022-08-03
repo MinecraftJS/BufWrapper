@@ -27,12 +27,3 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
-      - name: Generate docs
-        run: npm run doc
-      - name: Commit doc changes
-        uses: EndBug/add-and-commit@v9
-        with:
-          author_name: RichardDorian
-          author_email: richard.dorian@outlook.com
-          message: 'doc: :memo: update doc'
-          add: 'docs/*'
