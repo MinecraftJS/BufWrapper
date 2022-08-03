@@ -1,3 +1,5 @@
+// @ts-check
+
 const { BufWrapper } = require('../dist');
 const { assert } = require('chai');
 

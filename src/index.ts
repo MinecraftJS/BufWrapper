@@ -1,7 +1,9 @@
 import { Buffer } from 'node:buffer';
 import * as varint from 'varint';
 
-export class BufWrapper<Plugins extends BufWrapperPlugins = BufWrapperPlugins> {
+export class BufWrapper<
+  Plugins extends BufWrapperPluginsArgument = BufWrapperPluginsArgument
+> {
   /**
    * The wrapped NodeJS buffer
    */
@@ -17,7 +19,7 @@ export class BufWrapper<Plugins extends BufWrapperPlugins = BufWrapperPlugins> {
   /**
    * Installed plugins so you can access them from this object
    */
-  public plugins?: Plugins;
+  public plugins: BufWrapperPlugins<Plugins>;
 
   /** List of buffers, used for the `oneConcat` option */
   private buffers: Buffer[];
@@ -27,15 +29,17 @@ export class BufWrapper<Plugins extends BufWrapperPlugins = BufWrapperPlugins> {
    * @param buffer The NodeJS buffer to wrap, optional
    * @param options Options to apply to the buffer wrapper, optional
    */
-  public constructor(buffer?: Buffer, options?: BufWrapperOptions<Plugins>) {
+  public constructor(
+    buffer?: Buffer | null,
+    options?: BufWrapperOptions<Plugins>
+  ) {
     this.buffer = buffer || Buffer.alloc(0);
     this.offset = 0;
     this.buffers = [];
     this.options = options;
 
+    this.plugins = {} as BufWrapperPlugins<Plugins>;
     if (options?.plugins) {
-      this.plugins = {} as Plugins;
-
       for (const plugin of Object.keys(options.plugins)) {
         /**
          * Not gonna lie, this is very hacky but with
@@ -48,8 +52,9 @@ export class BufWrapper<Plugins extends BufWrapperPlugins = BufWrapperPlugins> {
 
         for (const method of Object.keys(options.plugins[plugin]))
           if (!this.plugins[plugin][method])
-            this.plugins[plugin][method] =
-              options.plugins[plugin][method].bind(this);
+            this.plugins[plugin as keyof Plugins][
+              method as keyof Plugins[keyof Plugins]
+            ] = options.plugins[plugin][method].bind(this);
       }
     }
   }
@@ -499,8 +504,20 @@ export class BufWrapper<Plugins extends BufWrapperPlugins = BufWrapperPlugins> {
   }
 }
 
+type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any
+  ? A
+  : never;
+
+export type BufWrapperPlugins<Argument extends BufWrapperPluginsArgument> = {
+  [plugin in keyof Argument]: {
+    [key in keyof Argument[plugin]]: (
+      ...args: ArgumentTypes<Argument[plugin][key]>
+    ) => ReturnType<Argument[plugin][key]>;
+  };
+};
+
 /** Type used as default value for the `BufWrapper#plugins` property */
-export type BufWrapperPlugins = {
+export type BufWrapperPluginsArgument = {
   [key: string]: {
     [key: string]: (...args: any[]) => any;
   };
