@@ -1,3 +1,4 @@
+import { UUID } from '@minecraft-js/uuid';
 import { Buffer } from 'node:buffer';
 import * as varint from 'varint';
 
@@ -266,46 +267,42 @@ export class BufWrapper<
 
   /**
    * Write an UUID to the buffer
-   * @param value The value to write (string, uuid with dashes or not)
+   * @param value The value to write (`UUID` instance)
    * @example
    * ```javascript
+   * import { parseUUID } from '@minecraft-js/uuid';
+   * const uuid = parseUUID('c09b74b4-8c14-44cb-b567-6576a2daf1f9');
+   *
    * const buf = new BufWrapper();
-   * buf.writeUUID('c09b74b4-8c14-44cb-b567-6576a2daf1f9');
+   * buf.writeUUID(uuid);
    * console.log(buf.buffer); // <Buffer C0 9B 74 B4 8C 14 44 CB B5 67 65 76 A2 DA F1 F9>
    * ```
    */
-  public writeUUID(value: string): void {
-    const buf = Buffer.alloc(16);
-    buf.write(value.replace(/-/g, ''), 0, 'hex');
-    this.writeToBuffer(buf);
+  public writeUUID(value: UUID): void {
+    this.writeBytes(value.getMostSignificantBits());
+    this.writeBytes(value.getLeastSignificantBits());
   }
 
   /**
    * Read an UUID from the buffer
-   * @param dashes If true, the UUID will be returned with dashes. Otherwise, it will be returned without dashes. Defaults to true.
    * @returns The UUID read from the buffer
    * @example
    * ```javascript
    * const buffer = Buffer.from([ 0xC0, 0x9B, 0x74, 0xB4, 0x8C, 0x14, 0x44, 0xCB, 0xB5, 0x67, 0x65, 0x76, 0xA2, 0xDA, 0xF1, 0xF9 ]);
    * const buf = new BufWrapper(buffer);
    * const decoded = buf.readUUID();
-   * console.log(decoded); // c09b74b4-8c14-44cb-b567-6576a2daf1f9
+   * console.log(decoded); // UUID <c09b74b4-8c14-44cb-b567-6576a2daf1f9>
    * ```
    */
-  public readUUID(dashes = true): string {
-    const value = this.buffer.toString('hex', this.offset, this.offset + 16);
+  public readUUID(): UUID {
+    const mostSigBits = this.buffer.subarray(this.offset, this.offset + 8);
+    const leastSigBits = this.buffer.subarray(
+      this.offset + 8,
+      this.offset + 16
+    );
+
     this.offset += 16;
-    return dashes
-      ? value.substr(0, 8) +
-          '-' +
-          value.substr(8, 4) +
-          '-' +
-          value.substr(12, 4) +
-          '-' +
-          value.substr(16, 4) +
-          '-' +
-          value.substr(20)
-      : value;
+    return new UUID(mostSigBits, leastSigBits);
   }
 
   /**

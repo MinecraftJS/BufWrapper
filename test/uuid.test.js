@@ -1,10 +1,15 @@
+// @ts-check
+
 const { assert } = require('chai');
 const { BufWrapper } = require('../dist');
+const { parseUUID } = require('@minecraft-js/uuid');
 
 describe('UUID', () => {
   it('Write 1', () => {
+    const uuid = parseUUID('c09b74b4-8c14-44cb-b567-6576a2daf1f9');
+
     const buf = new BufWrapper();
-    buf.writeUUID('c09b74b4-8c14-44cb-b567-6576a2daf1f9');
+    buf.writeUUID(uuid);
     assert.equal(
       buf.buffer.toString('hex'),
       'c09b74b48c1444cbb5676576a2daf1f9'
@@ -12,8 +17,10 @@ describe('UUID', () => {
   });
 
   it('Write 2', () => {
+    const uuid = parseUUID('12ba1036085a49c29fbd24517289ce58');
+
     const buf = new BufWrapper();
-    buf.writeUUID('12ba1036085a49c29fbd24517289ce58');
+    buf.writeUUID(uuid);
     assert.equal(
       buf.buffer.toString('hex'),
       '12ba1036085a49c29fbd24517289ce58'
@@ -27,7 +34,10 @@ describe('UUID', () => {
         0xa2, 0xda, 0xf1, 0xf9,
       ])
     );
-    assert.equal(buf.readUUID(), 'c09b74b4-8c14-44cb-b567-6576a2daf1f9');
+    assert.equal(
+      buf.readUUID().toString(),
+      'c09b74b4-8c14-44cb-b567-6576a2daf1f9'
+    );
   });
 
   it('Read 2', () => {
@@ -37,6 +47,10 @@ describe('UUID', () => {
         0x72, 0x89, 0xce, 0x58,
       ])
     );
-    assert.equal(buf.readUUID(false), '12ba1036085a49c29fbd24517289ce58');
+
+    assert.equal(
+      buf.readUUID().toString(false),
+      '12ba1036085a49c29fbd24517289ce58'
+    );
   });
 });
