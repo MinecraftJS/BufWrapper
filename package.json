@@ -15,7 +15,7 @@
   "keywords": [
     "minecraftjs"
   ],
-  "author": "todo: change",
+  "author": "RichardDorian",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/MinecraftJS/BufWrapper/issues"
@@ -31,6 +31,7 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
+    "@minecraft-js/uuid": "^1.0.0",
     "varint": "^6.0.0"
   },
   "files": [
