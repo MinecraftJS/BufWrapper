@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/MinecraftJS/BufWrapper#readme",
   "devDependencies": {
-    "@types/node": "^17.0.23",
+    "@types/node": "^18.7.14",
     "@types/varint": "^6.0.0",
     "benchmark": "^2.1.4",
     "chai": "^4.3.6",
