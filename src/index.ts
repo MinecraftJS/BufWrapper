@@ -26,6 +26,12 @@ export class BufWrapper<
   private buffers: Buffer[];
 
   /**
+   * Object containing plugins that will be automatically
+   * installed to new `BufWrapper` instances.
+   */
+  public static defaultPlugins: BufWrapperPluginsArgument = {};
+
+  /**
    * Create a new buffer wrapper instance
    * @param buffer The NodeJS buffer to wrap, optional
    * @param options Options to apply to the buffer wrapper, optional
@@ -41,6 +47,8 @@ export class BufWrapper<
 
     this.plugins = {} as BufWrapperPlugins<Plugins>;
     if (options?.plugins) {
+      options.plugins = { ...BufWrapper.defaultPlugins, ...options.plugins };
+
       for (const plugin of Object.keys(options.plugins)) {
         /**
          * Not gonna lie, this is very hacky but with
