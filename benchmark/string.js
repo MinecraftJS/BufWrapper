@@ -8,9 +8,11 @@ x[2][`write${x[0]}`](x[1]);
 
 console.log(`\n--- ${x[0]} --- (${x[1]})`);
 
+const buf = new BufWrapper(null, { oneConcat: true });
+
 new Suite()
   .add(`Writing ${x[0]}`, () => {
-    new BufWrapper()[`write${x[0]}`](x[1]);
+    buf[`write${x[0]}`](x[1]);
   })
   .on('complete', (event) => {
     console.log(event.target.toString());

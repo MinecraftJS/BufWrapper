@@ -112,42 +112,42 @@ Computer specs: Ryzen 5 3600 - 16GB at 2100MHz
 
 ```
 --- Boolean --- (true)
-Writing Boolean x 1,691,636 ops/sec ±0.75% (94 runs sampled)
-Reading Boolean x 12,444,612 ops/sec ±0.95% (90 runs sampled)
+Writing Boolean x 2,180,209 ops/sec ±17.18% (72 runs sampled)
+Reading Boolean x 12,197,094 ops/sec ±1.01% (91 runs sampled)
 
---- Bytes --- (56c6cdd8ac7f12836033752c2b82e37b83c5e4a0eb38dcede3a6e49ce3633b1e)
-Writing Bytes x 1,379,566 ops/sec ±0.99% (92 runs sampled)
-Reading Bytes x 7,333,770 ops/sec ±0.88% (90 runs sampled)
+--- Bytes --- (d7413d4d91ad68c41384aabd7b3b0c0f824fae0edeebe004dedb53aeffad8e19)
+Writing Bytes x 1,854,788 ops/sec ±17.30% (71 runs sampled)
+Reading Bytes x 7,043,744 ops/sec ±0.53% (90 runs sampled)
 
 --- Double --- (1.797693134862316e+154)
-Writing Double x 1,976,603 ops/sec ±1.19% (94 runs sampled)
-Reading Double x 12,142,118 ops/sec ±1.08% (93 runs sampled)
+Writing Double x 1,707,544 ops/sec ±34.77% (63 runs sampled)
+Reading Double x 11,385,573 ops/sec ±1.36% (90 runs sampled)
 
 --- Float --- (1.701411733e+38)
-Writing Float x 2,037,995 ops/sec ±0.24% (94 runs sampled)
-Reading Float x 12,814,483 ops/sec ±0.98% (89 runs sampled)
+Writing Float x 1,862,668 ops/sec ±14.34% (74 runs sampled)
+Reading Float x 11,960,613 ops/sec ±1.24% (88 runs sampled)
 
 --- Int --- (1073741823)
-Writing Int x 2,013,405 ops/sec ±0.38% (97 runs sampled)
-Reading Int x 14,167,639 ops/sec ±0.73% (92 runs sampled)
+Writing Int x 1,698,834 ops/sec ±26.28% (68 runs sampled)
+Reading Int x 13,448,500 ops/sec ±1.16% (95 runs sampled)
 
 --- Long --- (4611686018427387903)
-Writing Long x 1,215,060 ops/sec ±0.16% (96 runs sampled)
-Reading Long x 3,356,783 ops/sec ±0.45% (92 runs sampled)
+Writing Long x 1,056,670 ops/sec ±15.26% (74 runs sampled)
+Reading Long x 3,333,928 ops/sec ±0.45% (91 runs sampled)
 
 --- Short --- (16383)
-Writing Short x 1,902,872 ops/sec ±0.39% (95 runs sampled)
-Reading Short x 12,839,740 ops/sec ±0.95% (92 runs sampled)
+Writing Short x 1,717,828 ops/sec ±33.78% (64 runs sampled)
+Reading Short x 12,081,685 ops/sec ±1.93% (90 runs sampled)
 
 --- String --- (Hello World!)
-Writing String x 783,409 ops/sec ±0.46% (95 runs sampled)
-Reading String x 3,834,405 ops/sec ±0.57% (91 runs sampled)
+Writing String x 884,477 ops/sec ±11.15% (76 runs sampled)
+Reading String x 4,017,393 ops/sec ±0.82% (88 runs sampled)
 
---- UUID --- (1eecd0cf-234a-41fa-b1c2-6523a9558442)
-Writing UUID x 703,453 ops/sec ±0.11% (92 runs sampled)
-Reading UUID x 1,568,455 ops/sec ±0.53% (93 runs sampled)
+--- UUID --- (9d4ee772-e3ad-41e5-a3d9-9d549af83716)
+Writing UUID x 839,293 ops/sec ±4.30% (82 runs sampled)
+Reading UUID x 1,573,052 ops/sec ±0.46% (97 runs sampled)
 
 --- VarInt --- (42)
-Writing VarInt x 1,487,426 ops/sec ±0.42% (95 runs sampled)
-Reading VarInt x 10,789,658 ops/sec ±1.63% (86 runs sampled)
+Writing VarInt x 1,737,641 ops/sec ±3.09% (81 runs sampled)
+Reading VarInt x 10,303,053 ops/sec ±1.66% (80 runs sampled)
 ```
